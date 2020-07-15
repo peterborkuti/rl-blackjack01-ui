@@ -12,17 +12,25 @@ import { Dealer } from './dealer';
 export class DealerService {
   private players: GamePlayer[];
   private rawPlayers: Player[];
+  private rawPlayersRewards: number[];
+  private numOfGames: number;
 
   constructor(private cardService: CardService) {}
 
   clearPlayers() {
     this.rawPlayers = [];
+    this.rawPlayersRewards = [];
+    this.numOfGames = 0;
+  }
+
+  getScores(): {rewards: number[], numOfGames: number} {
+    return {rewards: this.rawPlayersRewards, numOfGames: this.numOfGames};
   }
 
   playWithAllPlayers() {
     const dealer = new GamePlayer(new Dealer());
     this.players = this.rawPlayers.map(player => new GamePlayer(player));
-
+    this.numOfGames++;
 
     this.players.forEach(player => {
       player.addCard(this.cardService.getCard());
@@ -47,8 +55,10 @@ export class DealerService {
 
     dealerSum = dealer.getSum();
 
-    this.players.forEach(player => {
-      player.learn(player.getReward(dealerSum), dealerSum);
+    this.players.forEach((player,index) => {
+      const reward = player.getReward(dealerSum);
+      player.learn(reward, dealerSum);
+      this.rawPlayersRewards[index]+=reward;
     })
   }
 
@@ -67,5 +77,6 @@ export class DealerService {
 
   addPlayer(player: Player) {
     this.rawPlayers.push(player);
+    this.rawPlayersRewards.push(0);
   }
 }
