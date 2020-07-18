@@ -13,18 +13,22 @@ export class DealerService {
   private players: GamePlayer[];
   private rawPlayers: Player[];
   private rawPlayersRewards: number[];
-  private numOfGames: number;
+  private numOfGames = 0;
+  private dealerReward = 0;
 
-  constructor(private cardService: CardService) {}
+  constructor(private cardService: CardService) {
+    this.clearPlayers();
+  }
 
   clearPlayers() {
     this.rawPlayers = [];
     this.rawPlayersRewards = [];
     this.numOfGames = 0;
+    this.dealerReward = 0;
   }
 
-  getScores(): {rewards: number[], numOfGames: number} {
-    return {rewards: this.rawPlayersRewards, numOfGames: this.numOfGames};
+  getScores(): {rewards: number[], numOfGames: number, dealerReward: number} {
+    return {rewards: this.rawPlayersRewards, numOfGames: this.numOfGames, dealerReward: this.dealerReward};
   }
 
   playWithAllPlayers() {
@@ -39,7 +43,7 @@ export class DealerService {
 
     dealer.addCard(this.cardService.getCard());
 
-    let dealerSum = dealer.getSum();
+    let dealerSum = dealer.getState().sum;
 
     this.checkNaturals(dealerSum);
 
@@ -53,25 +57,31 @@ export class DealerService {
 
     this.playWithOnePlayer(dealer, dealerSum);
 
-    dealerSum = dealer.getSum();
+    dealerSum = dealer.getState().sum;
 
     this.players.forEach((player,index) => {
       const reward = player.getReward(dealerSum);
       player.learn(reward, dealerSum);
       this.rawPlayersRewards[index]+=reward;
+      this.dealerReward += -reward;
+
     })
   }
 
   checkNaturals(dealerSum: number): void {
-    this.players.filter(gp => gp.getSum() == 21)
+    this.players.filter(gp => gp.getState().sum == 21)
       .forEach(gp => gp.learn(gp.getReward(dealerSum), dealerSum));
-    this.players = this.players.filter(gp => gp.getSum() != 21);
+    this.players = this.players.filter(gp => gp.getState().sum != 21);
   }
 
   playWithOnePlayer(player: GamePlayer, dealerSum: number) {
     let action = Action.HIT;
-    while(action === Action.HIT && player.getSum() < 21) {
+
+    while(action === Action.HIT && player.getState().sum < 21) {
       action = player.play(dealerSum);
+      if (action == Action.HIT) {
+        player.addCard(this.cardService.getCard());
+      }
     }
   }
 

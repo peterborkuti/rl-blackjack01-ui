@@ -1,5 +1,6 @@
 import { Player } from '../interfaces/player';
 import { Action } from '../enums/action.enum';
+import { State } from '../classes/state';
 
 /**
  * An Ace in hand can be counted as 1 or 11
@@ -10,43 +11,39 @@ import { Action } from '../enums/action.enum';
  * (11 + 11 = 22, so the previous ace must be 1)
  */
 export class GamePlayer {
-    private aceCanBeCountedAsOne = false;
-    private sumOfHand = 0;
+    private state = new State();
 
     constructor(private player: Player){
         this.player.prepareForANewGame();
     };
 
-    getSum(): number {
-        return this.sumOfHand;
-    }
-
-    getUsableAce(): boolean {
-        return this.aceCanBeCountedAsOne;
+    getState(): State {
+        return this.state;
     }
 
     addCard(card: number) {
-        let summa = this.sumOfHand + card;
+        let summa = this.state.sum + card;
 
         // maybe a previous card was ace
         summa = this.checkBustWithAceInHand(summa);
 
         if (card == 11) {
-            this.aceCanBeCountedAsOne = true;
+            this.state.usableAce = true;
             summa = this.checkBustWithAceInHand(summa);
         }
 
-        this.sumOfHand = summa;
+        this.state.sum = summa;
     }
 
-    play(dealerSum: number): Action {
-        return this.player.play(this.sumOfHand, this.aceCanBeCountedAsOne, dealerSum);
+    play(dealerCard: number): Action {
+        this.state.dealerCard = dealerCard;
+        return this.player.play(this.state);
     }
 
     private checkBustWithAceInHand(summa): number {
-        if (summa > 21 && this.aceCanBeCountedAsOne) {
+        if (summa > 21 && this.state.usableAce) {
             summa -= 10;
-            this.aceCanBeCountedAsOne = false;
+            this.state.usableAce = false;
         }
 
         return summa;
@@ -54,11 +51,11 @@ export class GamePlayer {
 
     learn(reward: number, dealerSum: number) {
         this.player.episodeDone(
-            this.sumOfHand, this.aceCanBeCountedAsOne, dealerSum, reward);
+            this.state, reward);
     }
 
     getReward(dealerSum): number {
-        if (this.sumOfHand > 21) {
+        if (this.state.sum > 21) {
           return -1;
         }
     
@@ -66,7 +63,7 @@ export class GamePlayer {
           return 1;
         }
     
-        const diffPlayer = 21 - this.sumOfHand;
+        const diffPlayer = 21 - this.state.sum;
         const diffDealer = 21 - dealerSum;
     
         if (diffDealer == diffPlayer) {

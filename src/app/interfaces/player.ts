@@ -1,7 +1,8 @@
 import { Action } from '../enums/action.enum';
+import { State } from '../classes/state';
 
 export abstract class Player {
     prepareForANewGame(): void {};
-    abstract play(hand: number, usableAce: boolean, dealer: number): Action;
-    episodeDone(hand: number, usableAce: boolean, dealer: number, reward: number): void {};
+    abstract play(state: State): Action;
+    episodeDone(state: State, reward: number): void {};
 }

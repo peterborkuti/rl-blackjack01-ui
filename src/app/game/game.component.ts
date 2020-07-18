@@ -1,15 +1,34 @@
 import { Component, OnInit } from '@angular/core';
+import { DealerService } from '../services/dealer.service';
+import { RandomPlayer } from '../services/random-player';
+import { RandomGeneratorService } from '../services/random-generator.service';
 
 @Component({
-  selector: 'app-game',
+  selector: 'game',
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.css']
 })
 export class GameComponent implements OnInit {
 
-  constructor() { }
+  public numOfGames = 0;
+  public dealersWin = 0;
+  public playersWin = [];
+  constructor(private dealerService: DealerService, private random: RandomGeneratorService) { }
 
   ngOnInit(): void {
+    this.dealerService.addPlayer(new RandomPlayer(this.random))
+  }
+
+  play100Games(): void {
+    for (let i = 0; i < 100; i++) {
+      setTimeout(() => this.dealerService.playWithAllPlayers(), 0);
+    }
+
+    const scores = this.dealerService.getScores();
+    this.numOfGames = scores.numOfGames;
+    this.dealersWin =scores.dealerReward;
+    this.playersWin = scores.rewards;
+
   }
 
 }
