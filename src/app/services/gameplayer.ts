@@ -11,7 +11,7 @@ import { State } from '../classes/state';
  * (11 + 11 = 22, so the previous ace must be 1)
  */
 export class GamePlayer {
-    private state = new State();
+    private state = new State(0, false, 0);
 
     constructor(private player: Player){
         this.player.prepareForANewGame();
@@ -49,7 +49,7 @@ export class GamePlayer {
         return summa;
     }
 
-    learn(reward: number, dealerSum: number) {
+    learn(reward: number) {
         this.player.episodeDone(
             this.state, reward);
     }

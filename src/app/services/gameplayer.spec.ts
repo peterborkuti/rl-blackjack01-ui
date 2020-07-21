@@ -1,9 +1,10 @@
 import { Player } from "../interfaces/player"
 import { Action } from '../enums/action.enum'
 import { GamePlayer } from './gameplayer';
+import { State } from '../classes/state';
 
 class MockPlayer extends Player {
-    play(hand: number, usableAce: boolean, dealer: number): Action {
+    play(state: State): Action {
         return Action.HIT;
     }
 }
@@ -43,43 +44,43 @@ describe('gameplayer - addCard', () => {
         gamePlayer = new GamePlayer(new MockPlayer());
     })
     it('should add card', () =>{
-        expect(gamePlayer.getSum()).toBe(0);
+        expect(gamePlayer.getState().sum).toBe(0);
         gamePlayer.addCard(1);
-        expect(gamePlayer.getSum()).toBe(1);
+        expect(gamePlayer.getState().sum).toBe(1);
         gamePlayer.addCard(2);
-        expect(gamePlayer.getSum()).toBe(3);
+        expect(gamePlayer.getState().sum).toBe(3);
     })
     it('should add ace as 1 if busts and no usableAce', () =>{
         gamePlayer.addCard(20);
-        expect(gamePlayer.getSum()).toBe(20);
+        expect(gamePlayer.getState().sum).toBe(20);
         gamePlayer.addCard(11);
-        expect(gamePlayer.getSum()).toBe(21);
-        expect(gamePlayer.getUsableAce()).toBeFalse();
+        expect(gamePlayer.getState().sum).toBe(21);
+        expect(gamePlayer.getState().usableAce).toBeFalse();
     })
 
     it('should add ace as 11 if not busts and usableAce', () =>{
         gamePlayer.addCard(10);
-        expect(gamePlayer.getSum()).toBe(10);
+        expect(gamePlayer.getState().sum).toBe(10);
         gamePlayer.addCard(11);
-        expect(gamePlayer.getSum()).toBe(21);
-        expect(gamePlayer.getUsableAce()).toBeTrue();
+        expect(gamePlayer.getState().sum).toBe(21);
+        expect(gamePlayer.getState().usableAce).toBeTrue();
     })
     it('should count two aces as 1 if busts and no usableAce', () =>{
         gamePlayer.addCard(9);
-        expect(gamePlayer.getSum()).toBe(9);
-        expect(gamePlayer.getUsableAce()).toBeFalse();
+        expect(gamePlayer.getState().sum).toBe(9);
+        expect(gamePlayer.getState().usableAce).toBeFalse();
 
         gamePlayer.addCard(11);
-        expect(gamePlayer.getSum()).toBe(20);
-        expect(gamePlayer.getUsableAce()).toBeTrue();
+        expect(gamePlayer.getState().sum).toBe(20);
+        expect(gamePlayer.getState().usableAce).toBeTrue();
 
         gamePlayer.addCard(2);
-        expect(gamePlayer.getSum()).toBe(12);
-        expect(gamePlayer.getUsableAce()).toBeFalse();
+        expect(gamePlayer.getState().sum).toBe(12);
+        expect(gamePlayer.getState().usableAce).toBeFalse();
 
         gamePlayer.addCard(11);
-        expect(gamePlayer.getSum()).toBe(13);
-        expect(gamePlayer.getUsableAce()).toBeFalse();
+        expect(gamePlayer.getState().sum).toBe(13);
+        expect(gamePlayer.getState().usableAce).toBeFalse();
     })
 })
 
@@ -107,13 +108,15 @@ describe('GamePlayer - play', () => {
 
         gamePlayer.play(ANY_DEALERSUM);
 
-        expect(player.play).toHaveBeenCalledWith(2+11, USABLE_ACE, ANY_DEALERSUM);
+        expect(player.play).toHaveBeenCalledWith(
+            new State(2+11, USABLE_ACE, ANY_DEALERSUM));
     })
 })
 
 describe('GamePlayer - learn', () => {
     it('should call episodeDone with appropriate parameters', () => {
-        const player = jasmine.createSpyObj(['episodeDone', 'prepareForANewGame']);
+        const player = jasmine.createSpyObj(
+            ['play', 'episodeDone', 'prepareForANewGame']);
         const ANY_CARD = 2;
         const ANY_DEALERSUM=5;
         const USABLE_ACE=true;
@@ -124,8 +127,11 @@ describe('GamePlayer - learn', () => {
         gamePlayer.addCard(ANY_CARD);
         gamePlayer.addCard(11); // usable ace
 
-        gamePlayer.learn(ANY_REWARD, ANY_DEALERSUM);
+        gamePlayer.play(ANY_DEALERSUM);
 
-        expect(player.episodeDone).toHaveBeenCalledWith(2+11, USABLE_ACE, ANY_DEALERSUM, ANY_REWARD);
+        gamePlayer.learn(ANY_REWARD);
+
+        expect(player.episodeDone).toHaveBeenCalledWith(
+            new State(2+11, USABLE_ACE, ANY_DEALERSUM), ANY_REWARD);
     })
 })

@@ -18,9 +18,9 @@ export class RandomGeneratorService {
     }
 
     if (limits.length === 1) {
-      return Math.random() * limits[0];
+      return Math.floor(Math.random() * limits[0]);
     }
 
-    return Math.random() * (limits[1] - limits[0]) + limits[0];
+    return Math.floor(Math.random() * (limits[1] - limits[0]) + limits[0]);
   }
 }

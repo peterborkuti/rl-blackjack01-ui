@@ -31,4 +31,9 @@ describe('RandomGeneratorService', () => {
     expect(n).toBeGreaterThanOrEqual(3);
     expect(n).toBeLessThan(5);
   })
+
+  it('should give an integer', () => {
+    const n = service.getRandom(3, 5);
+    expect(n).toBe(Math.floor(n));
+  })
 });

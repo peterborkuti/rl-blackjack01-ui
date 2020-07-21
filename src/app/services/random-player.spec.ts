@@ -4,7 +4,7 @@ import { Action } from '../enums/action.enum';
 import { State } from '../classes/state';
 
 describe('RandomPlayer', () => {
-  const state = new State();
+  const state = new State(0, false, 0);
 
   it('should create an instance', () => {
     const service = jasmine.createSpyObj(['getRandom']);

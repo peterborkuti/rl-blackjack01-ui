@@ -61,7 +61,7 @@ export class DealerService {
 
     this.players.forEach((player,index) => {
       const reward = player.getReward(dealerSum);
-      player.learn(reward, dealerSum);
+      player.learn(reward);
       this.rawPlayersRewards[index]+=reward;
       this.dealerReward += -reward;
 
@@ -70,7 +70,7 @@ export class DealerService {
 
   checkNaturals(dealerSum: number): void {
     this.players.filter(gp => gp.getState().sum == 21)
-      .forEach(gp => gp.learn(gp.getReward(dealerSum), dealerSum));
+      .forEach(gp => gp.learn(gp.getReward(dealerSum)));
     this.players = this.players.filter(gp => gp.getState().sum != 21);
   }
 

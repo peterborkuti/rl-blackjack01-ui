@@ -8,8 +8,8 @@
       <p>Number of games: {{numOfGames}}, Dealer wins:{{dealersWin}}</p>
 
       <ul>
-        <li *ngFor="let p of playersWin">
-          {{ p }}
+        <li *ngFor="let p of playersWin;let i = index">
+          <b>{{playersName[i]}}</b>{{ p }}
         </li>
       </ul>
 
