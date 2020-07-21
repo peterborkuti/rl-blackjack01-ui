@@ -2,6 +2,13 @@ import { Component, OnInit, ElementRef, AfterViewInit } from '@angular/core';
 import * as d3 from 'd3';
 import { _3d } from 'd3-3d';
 
+/**
+ * The code is from here:
+ * https://gist.github.com/Niekes/e920c03edd7950578b8a6cded8b5a1a5
+ * 
+ * Thank you, Stefan Nieke
+ */
+
 @Component({
   selector: 'chart',
   templateUrl: './chart.component.html',
