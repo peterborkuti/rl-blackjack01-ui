@@ -5,12 +5,12 @@ import { Action } from '../enums/action.enum';
 describe('FirstVisitMCPredictionService - getAction', () => {
   let service: FirstVisitMCPredictionService;
 
-  it('should get random action when nothing learned', () => {
+  it('should get HIT nothing learned', () => {
     service = new FirstVisitMCPredictionService({getRandom: () => 0});
     expect(service.getAction(new State())).toBe(Action.HIT);
 
     service = new FirstVisitMCPredictionService({getRandom: () => 1});
-    expect(service.getAction(new State())).toBe(Action.STICK);
+    expect(service.getAction(new State())).toBe(Action.HIT);
   });
 
   it('should get STICK if only HIT was learned', () => {
@@ -99,10 +99,9 @@ describe('FirstVisitMCPredictionService - learnFromEpisode', () => {
     expect(V[keys[0]]).toBe(REWARD);
   })
 
-  it("After 2 step long success episode V should contanin 2 element with reward", () => {
+  it("After 2 step long success episode V should contain 2 elements with reward", () => {
     service = new FirstVisitMCPredictionService({getRandom: () => 0});
     const state1 = new State(10, false, 0);
-    const state2 = new State(20, false, 0);
     const REWARD = 10;
 
     service.startEpisode();

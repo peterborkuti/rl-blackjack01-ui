@@ -14,7 +14,7 @@ export class State {
     getKey(action?: Action): string {
         let actionStr = '';
         if (action !== undefined) {
-            actionStr = '-' + action;
+            actionStr = '-' + ((action === Action.HIT) ? 'HIT':'STICK');
         }
 
         return this.sum + '-' + this.usableAce + '-' + this.dealerCard + actionStr;

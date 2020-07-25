@@ -4,6 +4,7 @@ import { Player } from '../interfaces/player';
 import { CardService } from './card.service';
 import { GamePlayer } from './gameplayer';
 import { Dealer } from './dealer';
+import { GamePlayerFactoryService } from './game-player-factory.service';
 
 
 @Injectable({
@@ -16,7 +17,7 @@ export class DealerService {
   private numOfGames = 0;
   private dealerReward = 0;
 
-  constructor(private cardService: CardService) {
+  constructor(private cardService: CardService, private gamePlayerFactory: GamePlayerFactoryService) {
     this.clearPlayers();
   }
 
@@ -32,9 +33,7 @@ export class DealerService {
   }
 
   playWithAllPlayers() {
-    const dealer = new GamePlayer(new Dealer());
-    this.players = this.rawPlayers.map(player => new GamePlayer(player));
-    this.numOfGames++;
+    const dealer = this.initNewGame();
 
     this.players.forEach(player => {
       player.addCard(this.cardService.getCard());
@@ -42,22 +41,22 @@ export class DealerService {
     });
 
     dealer.addCard(this.cardService.getCard());
+    const dealerSecondCard = this.cardService.getCard();
+    dealer.addCard(dealerSecondCard);
 
-    let dealerSum = dealer.getState().sum;
-
-    this.checkNaturals(dealerSum);
+    this.players = this.checkNaturals(dealer.getState().sum);
 
     if (this.players.length == 0) {
       return;
     }
 
     this.players.forEach((player) => {
-      this.playWithOnePlayer(player, dealerSum);
+      this.playWithOnePlayer(player, dealerSecondCard);
     })
 
-    this.playWithOnePlayer(dealer, dealerSum);
+    this.playWithOnePlayer(dealer, dealerSecondCard);
 
-    dealerSum = dealer.getState().sum;
+    const dealerSum = dealer.getState().sum;
 
     this.players.forEach((player,index) => {
       const reward = player.getReward(dealerSum);
@@ -68,21 +67,33 @@ export class DealerService {
     })
   }
 
-  checkNaturals(dealerSum: number): void {
-    this.players.filter(gp => gp.getState().sum == 21)
-      .forEach(gp => gp.learn(gp.getReward(dealerSum)));
-    this.players = this.players.filter(gp => gp.getState().sum != 21);
+  private initNewGame(): GamePlayer {
+    this.players = this.rawPlayers.map(player => this.gamePlayerFactory.createGamePlayer(player));
+    this.numOfGames++;
+
+    return this.gamePlayerFactory.createGamePlayer(new Dealer());
+
   }
 
-  playWithOnePlayer(player: GamePlayer, dealerSum: number) {
+  checkNaturals(dealerSum: number): GamePlayer[] {
+    this.players.filter(gp => gp.getState().sum == 21)
+      .forEach(gp => gp.learn(gp.getReward(dealerSum)));
+    return this.players.filter(gp => gp.getState().sum != 21);
+  }
+
+  playWithOnePlayer(player: GamePlayer, dealerOpenCard: number) {
     let action = Action.HIT;
 
     while(action === Action.HIT && player.getState().sum < 21) {
-      action = player.play(dealerSum);
-      if (action == Action.HIT) {
+      action = player.play(dealerOpenCard);
+      if (action === Action.HIT) {
         player.addCard(this.cardService.getCard());
       }
     }
+  }
+
+  getActivePlayers(): GamePlayer[] {
+    return this.players.map(player => Object.assign({}, player));
   }
 
   addPlayer(player: Player) {

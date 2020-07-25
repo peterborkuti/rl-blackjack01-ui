@@ -29,13 +29,13 @@ export class GameComponent implements OnInit {
   }
 
   play100Games(): void {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 20000; i++) {
       setTimeout(() => this.dealerService.playWithAllPlayers(), 0);
     }
 
     const scores = this.dealerService.getScores();
     this.numOfGames = scores.numOfGames;
-    this.dealersWin =scores.dealerReward;
+    this.dealersWin = scores.dealerReward;
     this.playersWin = scores.rewards;
 
   }

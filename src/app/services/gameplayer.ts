@@ -12,10 +12,19 @@ import { State } from '../classes/state';
  */
 export class GamePlayer {
     private state = new State(0, false, 0);
+    private player:  Player;
 
-    constructor(private player: Player){
+    constructor(player?: Player) {
+      if (player !== undefined) {
+        this.player = player;
         this.player.prepareForANewGame();
-    };
+      }
+    }
+
+    setPlayer(player: Player) {
+      this.player = player;
+      this.player.prepareForANewGame();
+    }
 
     getState(): State {
         return this.state;

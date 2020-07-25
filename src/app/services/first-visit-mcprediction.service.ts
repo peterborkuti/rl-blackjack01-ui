@@ -35,18 +35,19 @@ export class FirstVisitMCPredictionService {
     const hitVal = this.V[keyHit];
     const stickVal = this.V[keyStick];
 
-    // both action has been tried, epsilon-greedy action
+    let action = Action.HIT;
+
+    // both actions have been tried, greedy action
     if (hitVal !== undefined && stickVal !== undefined) {
-      return (hitVal > stickVal && this.random.getRandom() >= epsilon) ? Action.HIT : Action.STICK;
+      action =  (hitVal > stickVal) ? Action.HIT : Action.STICK;
+    }
+    else {  // only one of the actions was tried, exploration 
+      action = (hitVal === undefined) ? Action.HIT : Action.STICK;
     }
 
-    // none action was tried, random action
-    if (hitVal === undefined && stickVal === undefined) {
-      return  this.random.getRandom() < 0.5 ? Action.HIT : Action.STICK;
-    }
+    console.log(action);
 
-    // only one of the actions was tried, exploration 
-    return (hitVal === undefined) ? Action.HIT : Action.STICK;
+    return action;
   }
 
   learnFromEpisode(reward: number): {[key: string]: number} {
