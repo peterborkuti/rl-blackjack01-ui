@@ -35,10 +35,7 @@ export class DealerService {
   playWithAllPlayers() {
     const dealer = this.initNewGame();
 
-    this.players.forEach(player => {
-      player.addCard(this.cardService.getCard());
-      player.addCard(this.cardService.getCard());
-    });
+    this.giveTwoCardToEveryPlayer();
 
     dealer.addCard(this.cardService.getCard());
     const dealerSecondCard = this.cardService.getCard();
@@ -56,23 +53,30 @@ export class DealerService {
 
     this.playWithOnePlayer(dealer, dealerSecondCard);
 
-    const dealerSum = dealer.getState().sum;
+    this.rewardPlayers(dealer.getState().sum);
+  }
 
+  initNewGame(): GamePlayer {
+    this.players = this.rawPlayers.map(player => this.gamePlayerFactory.createGamePlayer(player));
+    this.numOfGames++;
+
+    return this.gamePlayerFactory.createGamePlayer(new Dealer());
+  }
+
+  rewardPlayers(dealerSum: number) {
     this.players.forEach((player,index) => {
       const reward = player.getReward(dealerSum);
       player.learn(reward);
       this.rawPlayersRewards[index]+=reward;
       this.dealerReward += -reward;
-
     })
   }
 
-  private initNewGame(): GamePlayer {
-    this.players = this.rawPlayers.map(player => this.gamePlayerFactory.createGamePlayer(player));
-    this.numOfGames++;
-
-    return this.gamePlayerFactory.createGamePlayer(new Dealer());
-
+  giveTwoCardToEveryPlayer() {
+    this.players.forEach(player => {
+      player.addCard(this.cardService.getCard());
+      player.addCard(this.cardService.getCard());
+    });
   }
 
   checkNaturals(dealerSum: number): GamePlayer[] {
@@ -90,10 +94,6 @@ export class DealerService {
         player.addCard(this.cardService.getCard());
       }
     }
-  }
-
-  getActivePlayers(): GamePlayer[] {
-    return this.players.map(player => Object.assign({}, player));
   }
 
   addPlayer(player: Player) {

@@ -9,8 +9,6 @@ import { FirstVisitMCPredictionService } from './first-visit-mcprediction.servic
   providedIn: 'root'
 })
 export class MCPlayerService extends Player {
-  i = 0;
-
   constructor(
     private learnModule: FirstVisitMCPredictionService
     ) {
@@ -32,10 +30,5 @@ export class MCPlayerService extends Player {
 
   episodeDone(state: State, reward: number): void {
     const V = this.learnModule.learnFromEpisode(reward);
-    if (this.i % 10000 == 0) {
-      console.log(this.i);
-      console.log(V);
-    }
-    this.i++;
   }
 }

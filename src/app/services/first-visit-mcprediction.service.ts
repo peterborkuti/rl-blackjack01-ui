@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { State } from '../classes/state';
 import { Action } from '../enums/action.enum';
 import { SAR } from '../classes/sar';
-import { RandomGeneratorService } from './random-generator.service';
 
 
 @Injectable({
@@ -14,19 +13,24 @@ export class FirstVisitMCPredictionService {
   private episode: SAR[] = [];
   private firstStates: {[key: string]: number} = {};
 
-  constructor(private random: RandomGeneratorService) { }
+  constructor() { }
 
   startEpisode() {
     this.episode = [];
     this.firstStates = {};
   }
 
+  getEpisode(): SAR[] {
+    return this.episode.map(sar => new SAR(sar.getState(), sar.getAction(), sar.getReward()));
+  }
+
   addStep(state: State, action: Action, reward: number = 0) {
+    const _state = new State(state.sum, state.usableAce, state.dealerCard);
     const key = state.getKey(action);
     if (!this.firstStates[key]) {
       this.firstStates[key] = this.episode.length;
     }
-    this.episode.push(new SAR(state, action, reward));
+    this.episode.push(new SAR(_state, action, reward));
   }
 
   getAction(state: State, epsilon: number = 0): Action {
@@ -37,15 +41,16 @@ export class FirstVisitMCPredictionService {
 
     let action = Action.HIT;
 
-    // both actions have been tried, greedy action
+    // both actions have been tried, epsilon-greedy action
     if (hitVal !== undefined && stickVal !== undefined) {
       action =  (hitVal > stickVal) ? Action.HIT : Action.STICK;
+      if (Math.random() < epsilon) {
+        action = (action === Action.HIT) ? Action.STICK : Action.HIT;
+      }
     }
     else {  // only one of the actions was tried, exploration 
       action = (hitVal === undefined) ? Action.HIT : Action.STICK;
     }
-
-    console.log(action);
 
     return action;
   }
@@ -77,7 +82,8 @@ export class FirstVisitMCPredictionService {
     return Object.assign({}, this.V);
   }
 
-  private firstVisit(key: string, t: number): boolean {
-    return this.firstStates[key] == t;
+  firstVisit(key: string, t: number): boolean {
+    const keyIndex = this.firstStates[key];
+    return (keyIndex !== undefined && keyIndex === t);
   }
 }

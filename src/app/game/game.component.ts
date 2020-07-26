@@ -21,22 +21,41 @@ export class GameComponent implements OnInit {
     private mcPlayer: MCPlayerService) { }
 
   ngOnInit(): void {
-    this.dealerService.addPlayer(new RandomPlayer(this.random));
     this.dealerService.addPlayer(this.mcPlayer);
 
-    this.playersName = ['Random', 'MC'];
+    this.playersName = ['MC'];
+
+  }
+
+  learn() {
+    for (let i = 0; i < 10000; i++) {
+      setTimeout(() => {
+        this.dealerService.playWithAllPlayers()
+        this.numOfGames = i;
+      }, 0);
+
+    }
 
   }
 
   play100Games(): void {
-    for (let i = 0; i < 20000; i++) {
+    this.numOfGames = 0;
+    this.dealersWin = 0;
+    this.playersWin = Array(this.playersName.length).fill(0);
+
+    const scores0 = this.dealerService.getScores();
+
+    for (let i = 0; i < 100; i++) {
       setTimeout(() => this.dealerService.playWithAllPlayers(), 0);
+
     }
 
-    const scores = this.dealerService.getScores();
-    this.numOfGames = scores.numOfGames;
-    this.dealersWin = scores.dealerReward;
-    this.playersWin = scores.rewards;
+    setTimeout(() => {
+      const scores1 = this.dealerService.getScores();
+      this.numOfGames = scores1.numOfGames - scores0.numOfGames;
+      this.dealersWin = scores1.dealerReward - scores0.dealerReward;
+      this.playersWin = scores1.rewards.map((v,i) => v-scores0.rewards[i]);
+    }, 0);
 
   }
 
