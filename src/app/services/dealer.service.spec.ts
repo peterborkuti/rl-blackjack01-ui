@@ -314,4 +314,17 @@ describe('giveTwoCardToEveryPlayer, getscores', () => {
     expect(scores.rewards[0]).toBe(1);
   })
 
+  it('getScores-reward should be unmutable', () => {
+    cardInDeck = 1;
+
+    const scores0 = service.getScores();
+
+    service.addPlayer(hitBelow20Player);
+    service.playWithAllPlayers();
+
+    const scores1 = service.getScores();
+
+    expect(scores0.rewards).not.toEqual(scores1.rewards);
+  })
+
 })

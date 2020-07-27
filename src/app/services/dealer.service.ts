@@ -29,7 +29,7 @@ export class DealerService {
   }
 
   getScores(): {rewards: number[], numOfGames: number, dealerReward: number} {
-    return {rewards: this.rawPlayersRewards, numOfGames: this.numOfGames, dealerReward: this.dealerReward};
+    return {rewards: this.rawPlayersRewards.map(r => r), numOfGames: this.numOfGames, dealerReward: this.dealerReward};
   }
 
   playWithAllPlayers() {

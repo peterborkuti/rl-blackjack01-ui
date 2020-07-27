@@ -52,6 +52,7 @@ export class GameComponent implements OnInit {
 
     setTimeout(() => {
       const scores1 = this.dealerService.getScores();
+
       this.numOfGames = scores1.numOfGames - scores0.numOfGames;
       this.dealersWin = scores1.dealerReward - scores0.dealerReward;
       this.playersWin = scores1.rewards.map((v,i) => v-scores0.rewards[i]);
