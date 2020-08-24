@@ -9,7 +9,7 @@ export class CardService {
   constructor(private randomGenerator: RandomGeneratorService) {}
 
   public getCard(): number {
-    return this.randomGenerator.getRandom(2,11);
+    return this.randomGenerator.getRandom(2,12);
   }
 
 

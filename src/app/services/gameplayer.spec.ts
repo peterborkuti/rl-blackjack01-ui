@@ -109,7 +109,7 @@ describe('GamePlayer - play', () => {
         gamePlayer.play(ANY_DEALERSUM);
 
         expect(player.play).toHaveBeenCalledWith(
-            new State(2+11, USABLE_ACE, ANY_DEALERSUM));
+            new State(2+11, USABLE_ACE, ANY_DEALERSUM), true);
     })
 })
 

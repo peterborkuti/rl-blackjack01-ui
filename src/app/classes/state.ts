@@ -1,6 +1,8 @@
 import { Action } from '../enums/action.enum';
+import { applySourceSpanToExpressionIfNeeded } from '@angular/compiler/src/output/output_ast';
 
 export class State {
+    public readonly SEPARATOR = '-';
     sum = 0;
     usableAce = false;
     dealerCard = 0;
@@ -14,9 +16,20 @@ export class State {
     getKey(action?: Action): string {
         let actionStr = '';
         if (action !== undefined) {
-            actionStr = '-' + ((action === Action.HIT) ? 'HIT':'STICK');
+            actionStr = this.SEPARATOR + ((action === Action.HIT) ? 'HIT':'STICK');
         }
 
-        return this.sum + '-' + this.usableAce + '-' + this.dealerCard + actionStr;
+        return this.sum + this.SEPARATOR + this.usableAce + this.SEPARATOR + this.dealerCard + actionStr;
+    }
+
+    splitKey(key: string): {sum: number, usableAce: boolean, dealerCard: number, action: Action} {
+        const splitedKey = {sum: 0, usableAce: false, dealerCard: 0, action: Action.STICK};
+        const parts = key.split(this.SEPARATOR);
+        splitedKey.sum = +parts[0];
+        splitedKey.usableAce = (parts[1] === 'true');
+        splitedKey.dealerCard = +parts[2];
+        splitedKey.action = (parts[3] === 'HIT') ? Action.HIT : Action.STICK;
+
+        return splitedKey;
     }
 }

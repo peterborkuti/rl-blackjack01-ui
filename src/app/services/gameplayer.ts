@@ -26,6 +26,10 @@ export class GamePlayer {
       this.player.prepareForANewGame();
     }
 
+    setDealeCard(dealerOpenCard: number) {
+      this.state.dealerCard = dealerOpenCard;
+    }
+
     getState(): State {
         return this.state;
     }
@@ -44,9 +48,9 @@ export class GamePlayer {
         this.state.sum = summa;
     }
 
-    play(dealerCard: number): Action {
+    play(dealerCard: number, learningGame: boolean = true): Action {
         this.state.dealerCard = dealerCard;
-        return this.player.play(this.state);
+        return this.player.play(this.state, learningGame);
     }
 
     private checkBustWithAceInHand(summa): number {

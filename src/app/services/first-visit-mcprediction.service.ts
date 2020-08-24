@@ -55,7 +55,7 @@ export class FirstVisitMCPredictionService {
     return action;
   }
 
-  learnFromEpisode(reward: number): {[key: string]: number} {
+  learnFromEpisode(reward: number): void {
     const T = this.episode.length - 1;
     const lastSAR = this.episode[T];
     this.episode[T] = new SAR(lastSAR.getState(), lastSAR.getAction(), reward);
@@ -78,7 +78,9 @@ export class FirstVisitMCPredictionService {
         this.V[key] = this.Returns[key].reduce((total, actual)=> total+=actual, 0)/this.Returns[key].length;
       }
     }
+  }
 
+  getV(): {[key: string]: number} {
     return Object.assign({}, this.V);
   }
 

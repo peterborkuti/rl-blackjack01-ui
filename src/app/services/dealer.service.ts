@@ -32,8 +32,12 @@ export class DealerService {
     return {rewards: this.rawPlayersRewards.map(r => r), numOfGames: this.numOfGames, dealerReward: this.dealerReward};
   }
 
-  playWithAllPlayers() {
+  playWithAllPlayers(learningGame: boolean) {
     const dealer = this.initNewGame();
+
+    if (this.players.length == 0) {
+      return;
+    }
 
     this.giveTwoCardToEveryPlayer();
 
@@ -41,17 +45,11 @@ export class DealerService {
     const dealerSecondCard = this.cardService.getCard();
     dealer.addCard(dealerSecondCard);
 
-    this.players = this.checkNaturals(dealer.getState().sum);
-
-    if (this.players.length == 0) {
-      return;
-    }
-
     this.players.forEach((player) => {
-      this.playWithOnePlayer(player, dealerSecondCard);
+      this.playWithOnePlayer(player, dealerSecondCard, learningGame);
     })
 
-    this.playWithOnePlayer(dealer, dealerSecondCard);
+    this.playWithOnePlayer(dealer, dealerSecondCard, learningGame);
 
     this.rewardPlayers(dealer.getState().sum);
   }
@@ -79,17 +77,11 @@ export class DealerService {
     });
   }
 
-  checkNaturals(dealerSum: number): GamePlayer[] {
-    this.players.filter(gp => gp.getState().sum == 21)
-      .forEach(gp => gp.learn(gp.getReward(dealerSum)));
-    return this.players.filter(gp => gp.getState().sum != 21);
-  }
-
-  playWithOnePlayer(player: GamePlayer, dealerOpenCard: number) {
+  playWithOnePlayer(player: GamePlayer, dealerOpenCard: number, learningGame = true) {
     let action = Action.HIT;
 
-    while(action === Action.HIT && player.getState().sum < 21) {
-      action = player.play(dealerOpenCard);
+    while(action === Action.HIT && player.getState().sum <= 21) {
+      action = player.play(dealerOpenCard, learningGame);
       if (action === Action.HIT) {
         player.addCard(this.cardService.getCard());
       }

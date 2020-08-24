@@ -23,6 +23,6 @@ describe('DealerService', () => {
   });
 
   it('getRandomNumber should called with 2,11 ', () => {
-    expect(service.getCard()).toBe(211);
+    expect(service.getCard()).toBe(212);
   })
 });

@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { DealerService } from '../services/dealer.service';
-import { RandomPlayer } from '../services/random-player';
-import { RandomGeneratorService } from '../services/random-generator.service';
 import { MCPlayerService } from '../services/mcplayer.service';
+import { PrintBrainService } from '../services/print-brain.service';
 
 @Component({
   selector: 'game',
@@ -15,10 +14,13 @@ export class GameComponent implements OnInit {
   public dealersWin = 0;
   public playersWin = [];
   public playersName = [];
+
+  data = {};
+
   constructor(
     private dealerService: DealerService,
-    private random: RandomGeneratorService,
-    private mcPlayer: MCPlayerService) { }
+    private mcPlayer: MCPlayerService,
+    private printBrain: PrintBrainService) { }
 
   ngOnInit(): void {
     this.dealerService.addPlayer(this.mcPlayer);
@@ -30,11 +32,15 @@ export class GameComponent implements OnInit {
   learn() {
     for (let i = 0; i < 10000; i++) {
       setTimeout(() => {
-        this.dealerService.playWithAllPlayers()
+        this.dealerService.playWithAllPlayers(true)
         this.numOfGames = i;
       }, 0);
-
     }
+
+    setTimeout(() => {
+      this.data = this.mcPlayer.getV();
+      this.printBrain.printV(this.data);
+    }, 0);
 
   }
 
@@ -46,7 +52,7 @@ export class GameComponent implements OnInit {
     const scores0 = this.dealerService.getScores();
 
     for (let i = 0; i < 100; i++) {
-      setTimeout(() => this.dealerService.playWithAllPlayers(), 0);
+      setTimeout(() => this.dealerService.playWithAllPlayers(false), 0);
 
     }
 

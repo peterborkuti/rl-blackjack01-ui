@@ -77,7 +77,8 @@ describe('FirstVisitMCPredictionService - learnFromEpisode', () => {
 
     service.startEpisode();
     service.addStep(state, Action.STICK);
-    const V: {} = service.learnFromEpisode(REWARD);
+    service.learnFromEpisode(REWARD);
+    const V: {} = service.getV();
 
     const keys = Object.keys(V);
     expect(keys.length).toBe(1);
@@ -93,7 +94,8 @@ describe('FirstVisitMCPredictionService - learnFromEpisode', () => {
     service.addStep(state, Action.STICK);
     service.addStep(state, Action.STICK);
     service.addStep(state, Action.STICK);
-    const V: {} = service.learnFromEpisode(REWARD);
+    service.learnFromEpisode(REWARD);
+    const V: {} = service.getV();
 
     const keys = Object.keys(V);
     expect(keys.length).toBe(1);
@@ -108,7 +110,8 @@ describe('FirstVisitMCPredictionService - learnFromEpisode', () => {
     service.startEpisode();
     service.addStep(state1, Action.HIT);
     service.addStep(state1, Action.STICK);
-    const V: {} = service.learnFromEpisode(REWARD);
+    service.learnFromEpisode(REWARD);
+    const V: {} = service.getV();
 
     const keys = Object.keys(V);
     expect(keys.length).toBe(2);
