@@ -1,0 +1,24 @@
+<table>
+    <tr>
+        <td><h2>Usable Ace In Hand</h2></td><td><h2>No Usable Ace In Hand</h2></td>
+    </tr>
+
+    <tr>
+        <td>
+            <ng-container *ngTemplateOutlet="brainTable;context:{ctxRows: rowsUsableAce}"></ng-container>
+        </td>
+        <td>
+            <ng-container *ngTemplateOutlet="brainTable;context:{ctxRows: rowsNoUsableAce}"></ng-container>
+        </td>
+    </tr>
+</table>
+
+<ng-template #brainTable let-rows="ctxRows">
+    <table>
+        <tr *ngFor="let row of rows">
+            <td *ngFor="let col of row" [style]="col.style" [title]="col.probability">
+                {{col.content}}
+            </td>
+        </tr>
+    </table>
+</ng-template>

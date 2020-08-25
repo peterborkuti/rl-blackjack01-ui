@@ -6,6 +6,9 @@ import { GamePlayer } from './gameplayer';
 import { Dealer } from './dealer';
 import { GamePlayerFactoryService } from './game-player-factory.service';
 
+export class Score {
+  rewards: number[]; numOfGames: number; dealerReward: number
+}
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +31,7 @@ export class DealerService {
     this.dealerReward = 0;
   }
 
-  getScores(): {rewards: number[], numOfGames: number, dealerReward: number} {
+  getScores(): Score {
     return {rewards: this.rawPlayersRewards.map(r => r), numOfGames: this.numOfGames, dealerReward: this.dealerReward};
   }
 
