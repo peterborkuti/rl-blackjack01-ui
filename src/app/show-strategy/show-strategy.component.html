@@ -1,12 +1,13 @@
 <table>
     <tr>
-        <td><h2>Usable Ace In Hand</h2></td><td><h2>No Usable Ace In Hand</h2></td>
+        <td><h2>Usable Ace In Hand</h2></td><td style="width:5em"></td><td><h2>No Usable Ace In Hand</h2></td>
     </tr>
 
     <tr>
         <td>
             <ng-container *ngTemplateOutlet="brainTable;context:{ctxRows: rowsUsableAce}"></ng-container>
         </td>
+        <td></td>
         <td>
             <ng-container *ngTemplateOutlet="brainTable;context:{ctxRows: rowsNoUsableAce}"></ng-container>
         </td>

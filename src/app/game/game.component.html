@@ -1,7 +1,9 @@
 
-<button mat-button (click)="learn()">Learn from 10000 games</button>
-<button mat-button (click)="play100Games()">Play 100 games</button>
-
+<mat-toolbar>
+<button mat-raised-button (click)="learn()">Learn from 10000 games</button>
+<span class="spacer"></span>
+<button mat-raised-button (click)="play100Games()">Play 100 games</button>
+</mat-toolbar>
 
 <p>Number of learning games: {{numOfLearningGames}}</p>
 <p>Number of played games: {{numOfPlayedGames}}</p>
