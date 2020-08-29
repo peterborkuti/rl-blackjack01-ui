@@ -1,5 +1,10 @@
 # RlBlackjack01Ui
 
+Reinforcement Learning with Angular and BlackJack
+
+See here in action: https://peterborkuti.github.io/rl-blackjack01-ui/
+
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.0.1.
 
 ## Development server
